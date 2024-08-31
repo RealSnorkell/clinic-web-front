@@ -1,0 +1,84 @@
+<div class="container mx-auto p-4">
+    <div class="flex justify-end mb-4">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="modifyPatient()">Editar paciente</button>
+      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar paciente</button>
+    </div>
+  
+    <div class="bg-white p-6 rounded-lg shadow-md athlete-details" *ngIf="patient && !isEditing">
+      <h2 class="text-xl font-bold mb-4">Detalles del paciente</h2>
+      <div *ngIf="patient">
+        <p><strong>Nombre:</strong> {{ patient.personalInformationDto.name }}</p>
+        <p><strong>Apellido:</strong> {{ patient.personalInformationDto.surname}}</p>
+        <p><strong>Documento:</strong> {{ patient.personalInformationDto.document }}</p>
+        <p><strong>Tipo de documento:</strong> {{patient.personalInformationDto.idDocument}}</p>
+        <p><strong>Peso:</strong> {{ patient.weight }}</p>
+        <p><strong>Altura:</strong> {{ patient.height }}</p>
+      </div>
+    </div>
+  
+    <div class="bg-white p-6 rounded-lg shadow-md" *ngIf="patient && isEditing">
+      <h2 class="text-xl font-bold mb-4">Modificar paciente</h2>
+      <form (ngSubmit)="saveChanges()">
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700">Nombre</label>
+          <input id="name" [(ngModel)]="patient.personalInformationDto.name" name="name" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="surname" class="block text-gray-700">Apellido</label>
+          <input id="surname" [(ngModel)]="patient.personalInformationDto.surname" name="surname" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="document" class="block text-gray-700">Documento</label>
+          <input id="document" [(ngModel)]="patient.personalInformationDto.document" name="document" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="age" class="block text-gray-700">Peso</label>
+          <input id="age" [(ngModel)]="patient.weight" name="age" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="height" class="block text-gray-700">Altura</label>
+          <input id="height" [(ngModel)]="patient.height" name="height" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded mr-2">Aceptar</button>
+          <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" (click)="toggleEdit()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  
+    <ng-container *ngIf="appointmentsDataSource.data.length">
+      <div class="container mx-auto p-4">
+        <div class="mt-6 appointments">
+          <h2 class="text-xl font-bold mb-4">Citas del paciente</h2>
+          <table mat-table [dataSource]="appointmentsDataSource" matSort class="mat-table">
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+              <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="doctorName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Doctor </th>
+              <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.name}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="doctorSurname">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del doctor </th>
+              <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.surname}} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="diagnostic">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Diagnostico </th>
+              <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="appointmentDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: appointmentDisplayedColumns;" (click)="goToAppointmentDetails(row)" class="hover:bg-gray-50 cursor-pointer"></tr>
+          </table>
+          <mat-paginator [length]="pageLengthAppointments" [pageSize]="pageSizeAppointments" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onAppointmentsPageChange($event)"></mat-paginator>
+        </div>
+      </div>
+    </ng-container> 
+    <div class="flex justify-end mt-4">
+      <app-go-back-button></app-go-back-button>
+    </div>
+  </div>

@@ -1,0 +1,18 @@
+<mat-toolbar color="primary" class="flex justify-center">   
+    <button mat-button routerLink="/patients" class="btn">Pacientes</button>
+    <button mat-button routerLink="/doctors" class="btn">Doctores</button>
+    <button mat-button routerLink="/appointments" class="btn">Citas</button>
+</mat-toolbar>
+
+<mat-toolbar color="principal" class="flex justify-evenly">
+    <button mat-button (click)="navigateToCreatePatient()" class=".btn">Añadir un paciente</button>
+    <button mat-button (click)="navigateToCreateDoctor()" class=".btn">Añadir un doctor</button>
+    <button mat-button (click)="navigateToCreateAppointment()" class=".btn">Añadir una cita</button>
+</mat-toolbar>
+
+<style>
+    .btn {
+      font-size: 1.1rem; /* Ajusta el tamaño de fuente para hacer los botones más grandes */
+      padding: 1rem 2rem; /* Ajusta el relleno para aumentar el tamaño del botón */
+    }
+</style>
