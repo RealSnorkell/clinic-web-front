@@ -1,94 +1,81 @@
-<!-- Contenedor principal para la tabla y el botón -->
+<!-- Main container for table and button -->
 <div class="flex flex-col items-center justify-start min-h-screen p-10 space-y-4">
-    <!-- Título -->
+    <!-- Tittle -->
     <div class="w-full max-w-4xl">
-      <h1 class="text-xxl text-center font-bold mb-2">Citas</h1>
+      <h1 class="text-xxl text-center font-bold mb-2">Listado de citas</h1>
     </div>
-    <!-- Contenedor de Cajas de Búsqueda y Tabla -->
-    <div class="w-full max-w-4xl space-y-4">
-      <!-- Contenedor de Cajas de Búsqueda -->
-      <div class="flex flex-col space-y-4">
-        <!-- Selector de Tipo de Búsqueda y Caja de Búsqueda por Documento -->
-        <div class="flex flex-row items-center space-x-4">
-          <mat-form-field appearance="fill" class="w-1/3">
-            <mat-label>Buscar por: </mat-label>
-            <mat-select [formControl]="searchTypeControl" placeholder="Selecciona tipo de búsqueda">
-              <mat-option value="doctor">Doctor</mat-option>
-              <mat-option value="patient">Paciente</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="fill" class="w-2/3">
-            <mat-label>Documento</mat-label>
-            <input matInput [formControl]="documentControl" placeholder="Documento">
-          </mat-form-field>
-          <button mat-raised-button color="primary" (click)="searchAppointmentsByDocument()">Buscar</button>
-        </div>
-        <div>
-          <!-- <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Buscar por tipo de entrenamiento</mat-label>
-            <mat-select [formControl]="trainingTypeControl" placeholder="Tipo de entrenamiento">
-              <mat-option *ngFor="let type of trainingTypes" [value]="type">
-                {{ type }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field> -->
-        </div>
-      </div>
-      
-      <!-- Mensaje de Error -->
+    <!-- Container of Search box and Table box -->
+    <div class="w-full max-w-4xl space-y-4">   
+      <!-- Error Message -->
       <div *ngIf="errorMessage" class="w-full max-w-md p-4 bg-red-100 text-red-500 border border-red-300 rounded-md">
         {{ errorMessage }}
-      </div>
-      
-      <!-- Lista de Citas -->
+      </div>     
+      <!-- Table of Appointments -->
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
-          <!-- Columna de Fecha -->
+          <!-- Date Column -->
           <ng-container matColumnDef="date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
             <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
           </ng-container>
-  
-          <!-- Columna de Atleta -->
+          <!-- Patient Name Column -->
           <ng-container matColumnDef="patient">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Paciente </th>
-            <td mat-cell *matCellDef="let appointment"> {{appointment.patient.name}} </td>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.patient.personalInformationDto.name}} </td>
           </ng-container>
-  
-          <!-- Columna de Apellido del Atleta -->
+          <!-- Patient Surname Column -->
           <ng-container matColumnDef="patientSurname">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del paciente </th>
-            <td mat-cell *matCellDef="let appointment"> {{appointment.patient.surname}} </td>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.patient.personalInformationDto.surname}} </td>
           </ng-container>
-  
-          <!-- Columna de Entrenador -->
+          <!-- Patient SS Number Column -->
+          <ng-container matColumnDef="socialSecurityNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nº SS </th>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.patient.socialSecurityNumber}} </td>
+          </ng-container>
+          <!-- Doctor Name Column -->
           <ng-container matColumnDef="doctor">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Doctor </th>
-            <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.name}} </td>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.personalInformationDto.name}} </td>
           </ng-container>
-  
-          <!-- Columna de Apellido del Entrenador -->
-          <ng-container matColumnDef="coachSurname">
+          <!-- Doctor Surname Column -->
+          <ng-container matColumnDef="doctorSurname">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del doctor </th>
-            <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.surname}} </td>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.personalInformationDto.surname}} </td>
           </ng-container>
-
-          <!-- <ng-container matColumnDef="trainingType">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Entrenamiento </th>
-            <td mat-cell *matCellDef="let appointment"> {{appointment.trainingTypeRecord}} </td>
-          </ng-container> -->
-  
+          <!-- Doctor License Number Column -->
+          <ng-container matColumnDef="licenseNum">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nº Licencia Doc </th>
+            <td mat-cell *matCellDef="let appointment"> {{appointment.doctor.licenseNum}} </td>
+          </ng-container>       
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50 cursor-pointer" (click)="goToDetail(row)"></tr>
         </table>
-        <div class="flex justify-end mt-4">
-        <!-- Etiqueta cerrada de mat-paginator -->
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPageChange($event)"></mat-paginator>
+        <!-- Paginator -->
+        <div class="flex justify-end mt-4">      
+          <mat-paginator [pageSizeOptions]="[4, 8, 16]" showFirstLastButtons (page)="onPageChange($event)"></mat-paginator>
+        </div>
       </div>
-    </div>
-  
-    <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
-    <div class="flex justify-end mt-4 w-full max-w-4xl">
+    <!-- Search boxes container -->
+    <div class="flex flex-col space-y-4">
+      <!-- Search type selector -->
+      <div class="flex items-center space-x-4 mb-4 w-full py-4">
+        <mat-form-field appearance="fill" class="w-1/3">
+          <mat-label>Buscar por: </mat-label>
+          <mat-select [formControl]="searchTypeControl" placeholder="Selecciona tipo de búsqueda">
+            <mat-option value="doctor">Doctor</mat-option>
+            <mat-option value="patient">Paciente</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-2/3">
+          <mat-label>Documento</mat-label>
+          <input matInput [formControl]="documentControl" placeholder="Documento">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="searchAppointmentsByDocument()">Buscar</button>
+      </div>
+    <!-- Back button just bellow the table, aligned to the right -->
+    <div class="flex justify-end mt-4">
       <app-go-back-button></app-go-back-button>
     </div>
   </div>
+</div>

@@ -10,6 +10,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { Page } from '../../../../core/models/page.model';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import moment from 'moment';
+import { FullAppointment } from '../../../../core/models/appointment.model';
 
 @Component({
   selector: 'app-appointment-detail',
@@ -17,7 +19,36 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
   styleUrl: './appointment-detail.component.css',
 })
 export class AppointmentDetailComponent {
-  appointment: any = {};
+  appointment: FullAppointment = {
+    doctor: {
+      id: '',
+      licenseNum: '',
+      mirDate: '',
+      idDoctorAppointments: [],
+      specializations: [],
+      personalInformationDto: {
+        name: '',
+        surname: '',
+        idDocument: '',
+        document: '',
+      },
+    },
+    patient: {
+      id: '',
+      socialSecurityNumber: '',
+      height: 0,
+      weight: 0,
+      idPatientAppointments: [],
+      personalInformationDto: {
+        name: '',
+        surname: '',
+        idDocument: '',
+        document: '',
+      },
+    },
+    date: '',
+  };
+
   doctor: Doctor = {} as Doctor;
   doctors: Doctor[] = [];
   patient: Patient = {} as Patient;
@@ -25,6 +56,7 @@ export class AppointmentDetailComponent {
   id: string = '';
   isEditing = false;
   appointmentForm: FormGroup;
+  visibleButtons: boolean = true;
 
   constructor(
     private _route: ActivatedRoute,
@@ -40,6 +72,8 @@ export class AppointmentDetailComponent {
       date: ['', Validators.required],
       time: ['', Validators.required],
       doctorId: ['', Validators.required],
+      diagnostic: [''],
+      treatment: [''],
     });
   }
 
@@ -84,7 +118,8 @@ export class AppointmentDetailComponent {
     this._appointmentService.getAppointmentById(id).subscribe({
       next: (appointment) => {
         this.appointment = appointment;
-        //this.getPatientById(appointment.patient.!id);
+        console.log('The appointment object:', this.appointment);
+        this.getPatientById(this.appointment.patient.id as string);
         this.populateForm(); // Populate form with existing appointment data
       },
       error: (err) => console.error('Error fetching appointment', err),
@@ -103,50 +138,32 @@ export class AppointmentDetailComponent {
     const selectedDoctor = this.doctors.find(
       (doctor) => doctor.id === selectedDoctorId
     );
-
-    if (selectedDoctor) {
-      this.appointmentForm.patchValue({
-        coachId: selectedDoctor.id,
-        coachName: selectedDoctor.personalInformationDto.name,
-        coachSurname: selectedDoctor.personalInformationDto.surname,
-        coachDocument: selectedDoctor.personalInformationDto.document,
-      });
-      console.log('Selected doctor ID:', selectedDoctor.id);
-      console.log('Form value after selection:', this.appointmentForm.value);
-    }
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
+    this.visibleButtons = !this.visibleButtons;
   }
 
-  saveChanges(): void {
+  onSubmit(): void {
     if (this.appointmentForm.valid) {
       const formValues = this.appointmentForm.value;
-      /*const combinedDateTime = moment(formValues.date)
+      const combinedDateTime = moment(formValues.date)
         .set({
           hour: moment(formValues.time, 'HH:mm').hour(),
           minute: moment(formValues.time, 'HH:mm').minute(),
         })
-        .toISOString(); // Esto generará el formato 2021-01-14T03:07:22.000Z automáticamente
-*/
-      const selectedDoctor = this.doctors.find(
-        (doctor) => doctor.id === formValues.coachId
+        .toISOString(); // Esto generará un formato al que habrá que extraer los últimos 5 carácteres.
+      let dateToSend = combinedDateTime.substring(
+        0,
+        combinedDateTime.length - 5
       );
-
       const updatedAppointment = {
         ...this.appointment,
-        //date: combinedDateTime,
-        doctorId: formValues.doctorId,
-        doctorName: selectedDoctor
-          ? selectedDoctor.personalInformationDto.name
-          : String,
-        doctorSurname: selectedDoctor
-          ? selectedDoctor.personalInformationDto.surname
-          : String,
-        doctorDocument: selectedDoctor
-          ? selectedDoctor.personalInformationDto.document
-          : undefined,
+        date: dateToSend,
+        doctor: this.appointmentForm.get('doctorId')?.value,
+        treatment: this.appointmentForm.get('treatment')?.value,
+        diagnostic: this.appointmentForm.get('diagnostic')?.value,
       };
 
       console.log('Form Values:', formValues);
@@ -168,15 +185,15 @@ export class AppointmentDetailComponent {
       console.error('Formulario no válido');
     }
   }
+
   populateForm(): void {
     if (this.appointment && this.appointment.date) {
-      // const date = moment(this.appointment.date).format('YYYY-MM-DD');
-      //const time = moment(this.appointment.date).format('HH:mm');
+      const date = moment(this.appointment.date).format('YYYY-MM-DD');
+      const time = moment(this.appointment.date).format('HH:mm');
       this.appointmentForm.patchValue({
-        //date: date,
-        //time: time,
-        coachId: this.appointment.coachId,
-        trainingTypeRecord: this.appointment.trainingTypeRecord,
+        date: date,
+        time: time,
+        doctorId: this.appointment.doctor.id,
       });
     }
   }

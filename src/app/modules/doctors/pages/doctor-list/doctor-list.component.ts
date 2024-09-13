@@ -41,12 +41,13 @@ export class DoctorListComponent implements OnInit {
   getDoctors(page: number, size: number): void {
     this._doctorService.getDoctors(page, size).subscribe({
       next: (value) => {
+        console.log(value);
         if (value && value.content) {
-          this.dataSource.data = value.content;
+          this.doctors = value.content;
           if (this.paginator) {
             this.paginator.length = value.totalElements;
           }
-          console.log(this.dataSource.data);
+          console.log(this.doctors);
         } else {
           console.error('Invalid response structure', value);
         }

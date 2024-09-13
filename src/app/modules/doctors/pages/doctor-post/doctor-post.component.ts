@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DoctorService } from '../../service/doctor.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Doctor } from '../../../../core/models/doctor.model';
+import { DoctorService } from '../../service/doctor.service';
+import { DocumentType } from '../../../../core/models/common.model';
 
 @Component({
   selector: 'app-doctor-post',
@@ -29,7 +30,6 @@ export class DoctorPostComponent {
       document: ['', Validators.required],
       specializations: [[]],
       licenseNum: ['', Validators.required],
-      birthday: ['', Validators.required],
       mirDate: ['', Validators.required],
     });
   }
@@ -37,33 +37,30 @@ export class DoctorPostComponent {
   submitForm(): void {
     if (this.doctorForm.valid) {
       const formValues = this.doctorForm.value;
-      const newDoc = {
-        personalInformation: {
+      const newDoc: Doctor = {
+        licenseNum: formValues.licenseNum,
+        mirDate: formValues.mirDate.toISOString().split('T')[0],
+        personalInformationDto: {
           name: formValues.name,
           surname: formValues.surname,
-          documentType: formValues.documentType,
+          idDocument: formValues.documentType,
           document: formValues.document,
-          birthDay: formValues.birthday,
         },
-        licenseNum: formValues.licenseNum,
         specializations: [],
-        mirDate: formValues.mirDate,
+        idDoctorAppointments: [],
       };
       this.postDoctor(newDoc);
     }
   }
 
-  private postDoctor(newDoctor: any): void {
+  private postDoctor(newDoctor: Doctor): void {
     this.isLoading = true; // Mostrar el spinner
+    console.log(newDoctor);
     this._doctorService.postDoctor(newDoctor).subscribe({
       next: (createdDoctor: Doctor) => {
         this.isLoading = false; // Ocultar el spinner
-        if (createdDoctor && createdDoctor.id) {
-          this.inputMessage = 'Doctor created';
-          this._router.navigate(['/doctors/detail', createdDoctor.id]); // Redirigir a la página de detalles del doctor.
-        } else {
-          console.error('El objeto creado no tiene un ID:', createdDoctor);
-        }
+        this.inputMessage = '¡Doctor creado con éxito!';
+        this._router.navigate(['/doctors/list']);
       },
       error: (error: any) => {
         console.error('Error creando al doctor:', error);

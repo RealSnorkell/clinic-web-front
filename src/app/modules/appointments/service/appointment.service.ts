@@ -5,7 +5,10 @@ import { backUrl } from '../../../environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page } from '../../../core/models/page.model';
-import { Appointment } from '../../../core/models/appointment.model';
+import {
+  Appointment,
+  FullAppointment,
+} from '../../../core/models/appointment.model';
 import { Patient } from '../../../core/models/patient.model';
 
 @Injectable({
@@ -24,12 +27,10 @@ export class AppointmentService {
     const params = { page: page.toString(), size: size.toString() };
     return this._http.get<Page<Appointment>>(this._apiUrl, { params });
   }
-  getAppointmentById(id: string): Observable<Appointment> {
-    return this._http.get<Appointment>(`${this._apiUrl}/${id}`);
+  getAppointmentById(id: string): Observable<FullAppointment> {
+    return this._http.get<FullAppointment>(`${this._apiUrl}/${id}`);
   }
-  getPatientById(athleteId: string): Observable<Patient> {
-    return this._http.get<Patient>(`${this._apiUrl}/patients/${athleteId}`);
-  }
+
   getAppointmentsByDoctorDocument(
     document: string,
     page: number,
@@ -39,15 +40,7 @@ export class AppointmentService {
       `${this._apiUrl}/doctors/searchByDocument?document=${document}&page=${page}&size=${size}`
     );
   }
-  getAppointmentsByPatientId(
-    id: string,
-    pageable: any
-  ): Observable<Page<Appointment>> {
-    return this._http.get<Page<Appointment>>(
-      `${this._apiUrl}/appointments/patients/${id}`,
-      { params: pageable }
-    );
-  }
+
   getAppointmentsByPatientDocument(
     document: string,
     page: number,
@@ -58,9 +51,9 @@ export class AppointmentService {
     );
   }
 
-  createAppointment(appointment: any): Observable<any> {
+  createAppointment(appointment: Appointment): Observable<Appointment> {
     console.log('Creating appointment:', appointment);
-    return this._http.post<any>(this._apiUrl, appointment);
+    return this._http.post<Appointment>(this._apiUrl, appointment);
   }
 
   updateAppointment(

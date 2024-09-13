@@ -1,9 +1,9 @@
-import { PersonalInformation } from './patient.model';
+import { PersonalInformation } from './common.model';
 
 export interface Doctor {
-  id: string;
+  id?: string;
   licenseNum: string;
-  mirDate: Date;
+  mirDate: Date | string;
   idDoctorAppointments: string[];
   specializations: string[];
   personalInformationDto: PersonalInformation;

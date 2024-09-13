@@ -7,8 +7,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { Appointment } from '../../../../core/models/appointment.model';
+import {
+  Appointment,
+  FullAppointment,
+} from '../../../../core/models/appointment.model';
 import { MatPaginator } from '@angular/material/paginator';
+import { AppointmentService } from '../../../appointments/service/appointment.service';
 
 @Component({
   selector: 'app-doctor-detail',
@@ -17,7 +21,8 @@ import { MatPaginator } from '@angular/material/paginator';
 })
 export class DoctorDetailComponent implements OnInit {
   protected id: string = '';
-  public doctor?: Doctor;
+  public doctor!: Doctor;
+  protected visibleButtons: boolean = true;
   protected dataSource = new MatTableDataSource<Doctor>();
   protected appointmentsDataSource = new MatTableDataSource<Appointment>();
   protected displayedColumns: string[] = ['id', 'name', 'surname', 'document'];
@@ -41,14 +46,14 @@ export class DoctorDetailComponent implements OnInit {
     private _route: ActivatedRoute,
     private _routerNav: Router,
     private _snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private _appointmentService: AppointmentService
   ) {}
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
       this.id = params['id'];
       this.getDoctorById(this.id);
-      this.loadAllAppointments(this.id);
     });
   }
 
@@ -56,6 +61,7 @@ export class DoctorDetailComponent implements OnInit {
     this._doctorService.getDoctor(id).subscribe({
       next: (value) => {
         this.doctor = value;
+        this.loadAllAppointments();
       },
       error: (error) => {
         console.error('Error getting doctor', error);
@@ -63,23 +69,25 @@ export class DoctorDetailComponent implements OnInit {
     });
   }
 
-  loadAllAppointments(doctorId: string): void {
-    this._doctorService.getAppointmentsByDoctorId(doctorId).subscribe({
-      next: (response) => {
-        this.allAppointments = response.content;
-        this.pageLengthAppointments = response.totalElements;
-        this.updateAppointmentsDataSource(0, this.pageSizeAppointments);
-      },
-      error: (error) => {
-        console.error('Error fetching appointments', error);
-      },
-    });
-  }
-  updateAppointmentsDataSource(arg0: number, pageSizeAppointments: number) {
-    throw new Error('Method not implemented.');
+  loadAllAppointments(): void {
+    this._doctorService
+      .getAppointmentsByDoctorDocument(
+        this.doctor.personalInformationDto.document
+      )
+      .subscribe({
+        next: (response) => {
+          this.allAppointments = response.content;
+          this.pageLengthAppointments = response.totalElements;
+          this.updateAppointmentsDataSource(0, this.pageSizeAppointments);
+          console.log('Citas', this.allAppointments);
+        },
+        error: (error) => {
+          console.error('Error fetching appointments', error);
+        },
+      });
   }
 
-  /*  updateAppointmentsDataSource(pageIndex: number, pageSize: number): void {
+  updateAppointmentsDataSource(pageIndex: number, pageSize: number): void {
     const startIndex = pageIndex * pageSize;
     const endIndex = startIndex + pageSize;
     if (startIndex < this.allAppointments.length) {
@@ -90,11 +98,7 @@ export class DoctorDetailComponent implements OnInit {
     } else {
       this.appointmentsDataSource.data = [];
     }
-  } */
-
-  /* onAppointmentsPageChange(event: any): void {
-    this.updateAppointmentsDataSource(event.pageIndex, event.pageSize);
-  } */
+  }
 
   goToAppointmentDetails(appointment: Appointment): void {
     if (appointment && appointment.appointmentId) {
@@ -110,6 +114,7 @@ export class DoctorDetailComponent implements OnInit {
 
   enableEditing(): void {
     this.isEditing = !this.isEditing;
+    this.visibleButtons = !this.visibleButtons;
   }
 
   confirmDelete(): void {
@@ -136,7 +141,7 @@ export class DoctorDetailComponent implements OnInit {
     });
   }
 
-  saveChanges(): void {
+  onSubmit(): void {
     if (this.doctor) {
       this._doctorService.updateDoctor(this.id, this.doctor).subscribe({
         next: () => {
@@ -147,8 +152,25 @@ export class DoctorDetailComponent implements OnInit {
           });
         },
         error: (error) => {
-          console.error('Error updating coach', error);
+          console.error('Error updating doctor', error);
         },
+      });
+      this.doctor.idDoctorAppointments.forEach((appointmentId) => {
+        this._appointmentService.getAppointmentById(appointmentId).subscribe({
+          next: (appointment) => {
+            appointment.doctor = this.doctor;
+            this._appointmentService.updateAppointment(
+              appointmentId,
+              appointment
+            );
+          },
+          error: (error) => {
+            console.log(
+              'Error updating appointments for updated doctor. ',
+              error
+            );
+          },
+        });
       });
     }
   }

@@ -22,6 +22,7 @@ import { DoctorListComponent } from './pages/doctor-list/doctor-list.component';
 import { DoctorPostComponent } from './pages/doctor-post/doctor-post.component';
 import { GoBackButtonComponent } from '../../shared/components/go-back-button/go-back-button.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatDatepickerModule,
     SharedModule,
     MatDatepickerModule,
+    MatMomentDateModule,
   ],
 })
 export class DoctorsModule {}

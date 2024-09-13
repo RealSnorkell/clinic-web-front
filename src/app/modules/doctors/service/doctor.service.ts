@@ -23,9 +23,11 @@ export class DoctorService {
     return this._http.get<Doctor>(`${this._apiUrl}/list/${document}`);
   }
 
-  getAppointmentsByDoctorId(doctorId: string): Observable<Page<Appointment>> {
+  getAppointmentsByDoctorDocument(
+    document: string
+  ): Observable<Page<Appointment>> {
     return this._http.get<Page<Appointment>>(
-      `${this._apiUrl}/appointments/doctors/${doctorId}`
+      `$${backUrl}/appointments/doctors/${document}`
     );
   }
 

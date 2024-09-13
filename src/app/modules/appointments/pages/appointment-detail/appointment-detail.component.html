@@ -1,36 +1,49 @@
 <div class="container mx-auto p-4">
-    <div class="flex justify-end mb-4">
-      <!-- <button class="bg-blue-400 text-white px-4 py-2 rounded mr-2" (click)="navigateToCreateTrainingSheet()">
-        Crear Ficha de Entrenamiento
-      </button> -->
-      <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="toggleEdit()">Modificar cita</button>
-      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar cita</button>
-    </div>
-  
     <div class="bg-white shadow-md rounded-lg p-6">
-      <p class="text-lg font-bold mb-4">Detalles de la cita</p>
-      <div class="grid grid-cols-2 gap-x-8 gap-y-2">
-        <p class="text-gray-600">Fecha y hora:</p>
-        <!-- <p>{{ appointment.date | date: "medium" }}</p> -->
-        <p class="text-gray-600">Nombre paciente:</p>
-        <p>{{appointment.patient.personalInformationDto.name}}</p>
-        <p class="text-gray-600">Apellido paciente:</p>
-        <p>{{appointment.patient.personalInformationDto.surname}}</p>
-        <p class="text-gray-600">Documento paciente:</p>
-        <p>{{appointment.patient.personalInformationDto.document}}</p>
-        <p class="text-gray-600">Nombre doctor:</p>
-        <p>{{appointment.doctor.personalInformationDto.name}}</p>
-        <p class="text-gray-600">Apellido doctor:</p>
-        <p>{{appointment.doctor.personalInformationDto.surname}}</p>
-        <p class="text-gray-600">Documento doctor:</p>
-        <p>{{appointment.doctor.personalInformationDto.document}}</p>
-       <!--  <p class="text-gray-600">Tipo de Entrenamiento:</p>
-        <p>{{ appointment.trainingTypeRecord }}</p> -->
+      <h1 class="text-lg font-bold mb-4 ">Detalles de la cita</h1>
+        <div class="grid grid-cols-2 gap-4">     
+          <div>
+            <p class="text-lg font-bold">Fecha y hora</p>
+            <p>{{ appointment.date | date: "medium" }}</p>
+            <p class="text-lg font-bold">Nombre paciente</p>
+            <p>{{appointment.patient.personalInformationDto.name}}</p>
+            <p class="text-lg font-bold">Apellido paciente</p>
+            <p>{{appointment.patient.personalInformationDto.surname}}</p>
+            <p class="text-lg font-bold">Documento paciente</p>
+            <p>{{appointment.patient.personalInformationDto.document}}</p>
+            <p class="text-lg font-bold">Nº de la seguridad social</p>
+            <p>{{appointment.patient.socialSecurityNumber}}</p>
+          </div>
+        <div class="grid-cols-2">
+          <p class="text-lg font-bold">Nombre doctor</p>
+          <p>{{appointment.doctor.personalInformationDto.name}}</p>
+          <p class="text-lg font-bold">Apellido doctor</p>
+          <p>{{appointment.doctor.personalInformationDto.surname}}</p>
+          <p class="text-lg font-bold">Documento doctor</p>
+          <p>{{appointment.doctor.personalInformationDto.document}}</p>
+          <p class="text-lg font-bold">Nº Licencia</p>
+          <p>{{appointment.doctor.licenseNum}}</p>
+        </div>
       </div>
     </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <h1 class="text-lg font-bold mb-4 ">Observaciones</h1>
+        <div class="grid grid-cols-2 gap-4">     
+          <div>
+            <p class="text-lg font-bold">Diagnóstico</p>
+            <p>{{ appointment.diagnostic}}</p>
+            <p *ngIf="!appointment.diagnostic">No se ha evaluado.</p>
+          </div>
+        <div class="grid-cols-2">
+          <p class="text-lg font-bold">Tratamiento</p>
+          <p>{{appointment.treatment}}</p>
+          <p *ngIf="!appointment.treatment">No se ha evaluado.</p>
+        </div>
+      </div>
   
     <div *ngIf="isEditing" class="mt-6">
-      <form [formGroup]="appointmentForm" (ngSubmit)="saveChanges()">
+      <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
         <div class="mb-4">
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Fecha</mat-label>
@@ -51,21 +64,40 @@
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Selecciona un doctor</mat-label>
             <mat-select formControlName="doctorId" (selectionChange)="onDoctorsSelected($event)">
-              <mat-option *ngFor="let doctor of doctors" [value]="doctor.id">
+              <mat-option *ngFor="let doctor of doctors" [value]="doctor">
                 {{ doctor.personalInformationDto.name }} {{ doctor.personalInformationDto.surname }}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
+
+        <div class="mb-4">
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Diagnóstico</mat-label>
+            <input matInput  formControlName="diagnostic" type="text">
+          </mat-form-field>
+        </div>
+
+        <div class="mb-4">
+          <mat-form-field appearance="fill" class="w-full" >
+            <mat-label>Tratamiento</mat-label>
+            <input matInput formControlName="treatment" type="text">
+          </mat-form-field>
+        </div>
   
         <div class="flex justify-end">
           <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded mr-2" (click)="toggleEdit()">Cancelar</button>
-          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar Cambios</button>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Aceptar</button>
         </div>
       </form>
     </div>
     <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
-   <div class="flex justify-end mt-4">
-    <app-go-back-button></app-go-back-button>
-  </div>
-  </div>
+    <div class="w-full py-2"></div>
+    <div class="grid grid-cols-2 gap-4 w-full"></div>
+      <div class="flex justify-start">
+        <button *ngIf="visibleButtons" class="bg-orange-500 text-white px-4 py-2 rounded ml-4 mr-2" (click)="toggleEdit()">Editar cita</button>
+        <button *ngIf="visibleButtons" class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar cita</button>
+        <app-go-back-button class="ml-auto mr-4"></app-go-back-button>
+      </div>      
+    </div>
+

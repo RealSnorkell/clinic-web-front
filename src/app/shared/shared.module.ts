@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { GoBackButtonComponent } from './components/go-back-button/go-back-button.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [ConfirmDialogComponent, GoBackButtonComponent],
@@ -27,7 +28,8 @@ import { GoBackButtonComponent } from './components/go-back-button/go-back-butto
     MatIconModule,
     CommonModule,
     MatCardModule,
+    MatDialogModule,
   ],
-  exports: [GoBackButtonComponent],
+  exports: [GoBackButtonComponent, ConfirmDialogComponent],
 })
 export class SharedModule {}

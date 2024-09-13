@@ -17,8 +17,10 @@ export class AppointmentListComponent {
     'date',
     'patient',
     'patientSurname',
+    'socialSecurityNumber',
     'doctor',
     'doctorSurname',
+    'licenseNum',
   ];
   dataSource = new MatTableDataSource<Appointment>();
   searchControl = new FormControl('');
@@ -38,15 +40,17 @@ export class AppointmentListComponent {
   ngOnInit(): void {
     this.getAppointments(0, 4);
     this.dataSource.paginator = this.paginator;
-    //this.trainingTypeControl.valueChanges.subscribe(() => this.applyFilter());
     this.dataSource.sort = this.sort;
+    console.log(this.dataSource);
   }
 
   getAppointments(page: number, size: number): void {
     this._appointmentService.getAppointments(page, size).subscribe({
       next: (value) => {
+        console.log(value);
         if (value && value.content) {
           this.dataSource.data = value.content;
+          this.appointments = value.content;
           if (this.paginator) {
             this.paginator.length = value.totalElements;
           }

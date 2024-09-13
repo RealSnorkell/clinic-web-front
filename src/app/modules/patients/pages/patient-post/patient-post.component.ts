@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PatientService } from '../../service/patient.service';
 import { Router } from '@angular/router';
-import { DocumentType, Patient } from '../../../../core/models/patient.model';
+import { Patient } from '../../../../core/models/patient.model';
+import { DocumentType } from '../../../../core/models/common.model';
 
 @Component({
   selector: 'app-patient-post',
@@ -53,6 +54,7 @@ export class PatientPostComponent {
   }
 
   private createPatient(newPatient: Patient): void {
+    console.log(newPatient);
     this._patientService.createPatient(newPatient).subscribe({
       next: (createdPatient: Patient) => {
         this.inputMessage = 'Patient created';

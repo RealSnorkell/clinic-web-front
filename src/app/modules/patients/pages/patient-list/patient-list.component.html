@@ -1,25 +1,16 @@
-<div class="flex flex-col items-center justify-start min-h-screen p-4">
-    <!-- Título -->
+<!-- Main container for table and button -->
+<div class="flex flex-col items-center justify-start min-h-screen p-10 space-y-4">
+    <!-- Tittle -->
     <div class="w-full max-w-4xl">
       <h1 class="text-xxl font-bold mb-2 text-center">Listado pacientes</h1>
     </div>
-    <div class="w-full max-w-4xl">
-      <!-- Buscar por documento -->
-      <div class="flex items-center space-x-4 mb-4 w-full">
-        <div class="flex-grow-0 w-1/2">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Buscar por documento</mat-label>
-            <input matInput [formControl]="searchControl" placeholder="Documento de identidad">
-          </mat-form-field>
-        </div>
-        <button mat-raised-button color="primary" (click)="searchPatientByDocument()" class="whitespace-nowrap">Buscar</button>
-      </div>
-      
+    <div class="w-full max-w-4xl space-y-4"> 
       <!-- Error message -->
-      <div *ngIf="errorMessage" class="w-full max-w-md p-4 mb-4 bg-gray-100 text-red-500 border border-gray-300 rounded-md">{{ errorMessage }}</div>
-      
-      <!-- Tabla de atletas -->
-      <div class="mat-elevation-z8 w-full">
+      <div *ngIf="errorMessage" class="w-full max-w-md p-4 mb-4 bg-gray-100 text-red-500 border border-gray-300 rounded-md">
+        {{ errorMessage }}
+      </div> 
+      <!-- Table of Patients -->
+      <div class="mat-elevation-z8">
         <table mat-table [dataSource]="patients" class="mat-table w-full" matSort>
           <!-- Name Column -->
           <ng-container matColumnDef="name">
@@ -45,7 +36,7 @@
             <td mat-cell *matCellDef="let patient"> {{patient.personalInformationDto.document}} </td>
           </ng-container>
   
-          <!-- Age Column -->
+          <!-- Weight Column -->
           <ng-container matColumnDef="weight">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Peso </th>
             <td mat-cell *matCellDef="let patient"> {{patient.weight}} </td>
@@ -65,10 +56,19 @@
           <mat-paginator [pageSizeOptions]="[4, 8, 16]" showFirstLastButtons (page)="onPageChange($event)"></mat-paginator>
         </div>
       </div>
-  
+    <div class="flex flex-col space-y-4">
+      <!-- Search by document -->
+      <div class="flex items-center space-x-4 mb-4 w-full py-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Buscar por documento</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Documento de identidad">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="getPatientByDocument()" class="whitespace-nowrap">Buscar</button>
+      </div>
       <!-- Botón Back justo debajo de la tabla, alineado a la derecha -->
       <div class="flex justify-end mt-4">
         <app-go-back-button></app-go-back-button>
       </div>
     </div>
   </div>
+</div>

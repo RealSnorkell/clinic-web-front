@@ -21,6 +21,7 @@ export class PatientListComponent {
     'weight',
     'height',
   ];
+
   public searchControl = new FormControl();
   patients: Patient[] = [];
 
@@ -58,10 +59,10 @@ export class PatientListComponent {
     });
   }
 
-  searchPatientByDocument(): void {
+  getPatientByDocument(): void {
     const document = this.searchControl.value;
     if (document) {
-      this._patientService.searchPatientByDocument(document).subscribe({
+      this._patientService.getPatientByDocument(document).subscribe({
         next: (patient: Patient) => {
           if (patient) {
             this.patients = [patient];
@@ -73,8 +74,8 @@ export class PatientListComponent {
             this.getPatients(0, 4);
           }
         },
-        error: (err) => {
-          console.error('Error fetching patient by document', err);
+        error: (error) => {
+          console.error('Error fetching patient by document', error);
           this.errorMessage = 'No existe ningún paciente con ese documento';
           this.searchControl.setValue('');
           this.getPatients(0, 4);
@@ -92,7 +93,7 @@ export class PatientListComponent {
   }
 
   goToDetail(patient: Patient): void {
-    if (patient && patient.id) {
+    if (patient) {
       this.router.navigate([`/patients/detail/${patient.id}`]);
     }
   }

@@ -1,14 +1,11 @@
 <div class="container mx-auto p-4">
-    <div class="flex justify-end mb-4">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded mr-2" (click)="modifyDoctor()">Modificar doctor</button>
-      <button class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar doctor</button>
-    </div>
-  
     <div class="bg-white p-6 rounded-lg shadow-md coach-details" *ngIf="doctor && !isEditing">
       <h2 class="text-xl font-bold mb-4">Detalles del doctor</h2>
       <div *ngIf="doctor">
         <p><strong>Nombre:</strong> {{ doctor.personalInformationDto.name }}</p>
         <p><strong>Apellido:</strong> {{ doctor.personalInformationDto.surname }}</p>
+        <p><strong>Nº Licencia:</strong> {{ doctor.licenseNum }}</p>
+        <p><strong>Fecha MIR:</strong> {{ doctor.mirDate }}</p>
         <p><strong>Tipo de Documento:</strong> {{ doctor.personalInformationDto.idDocument }}</p>
         <p><strong>Documento:</strong> {{ doctor.personalInformationDto.document }}</p>
       </div>
@@ -16,7 +13,7 @@
   
     <div class="bg-white p-6 rounded-lg shadow-md" *ngIf="doctor && isEditing">
       <h2 class="text-xl font-bold mb-4">Modificar doctor</h2>
-      <form (ngSubmit)="saveChanges()">
+      <form (ngSubmit)="onSubmit()">
         <div class="mb-4">
           <label for="name" class="block text-gray-700">Nombre</label>
           <input id="name" [(ngModel)]="doctor.personalInformationDto.name" name="name" class="mt-1 p-2 border rounded w-full">
@@ -24,6 +21,14 @@
         <div class="mb-4">
           <label for="surname" class="block text-gray-700">Apellido</label>
           <input id="surname" [(ngModel)]="doctor.personalInformationDto.surname" name="surname" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="licenseNum" class="block text-gray-700">Nº Licencia</label>
+          <input id="licenseNum" [(ngModel)]="doctor.licenseNum" name="licenseNum" class="mt-1 p-2 border rounded w-full">
+        </div>
+        <div class="mb-4">
+          <label for="mirDate" class="block text-gray-700">Fecha MIR</label>
+          <input id="mirDate" [(ngModel)]="doctor.mirDate" name="mirDate" class="mt-1 p-2 border rounded w-full">
         </div>
         <div class="mb-4">
           <label for="document" class="block text-gray-700">Documento</label>
@@ -46,17 +51,17 @@
               <td mat-cell *matCellDef="let appointment"> {{appointment.date | date}} </td>
             </ng-container>
   
-            <ng-container matColumnDef="athleteName">
+            <ng-container matColumnDef="patientName">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del paciente </th>
               <td mat-cell *matCellDef="let appointment"> {{appointment.patient.name}} </td>
             </ng-container>
   
-            <ng-container matColumnDef="athleteSurname">
+            <ng-container matColumnDef="patientSurname">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del paciente </th>
               <td mat-cell *matCellDef="let appointment"> {{appointment.patient.surname}} </td>
             </ng-container>
   
-            <ng-container matColumnDef="trainingType">
+            <ng-container matColumnDef="diagnostic">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Diagnostico </th>
               <td mat-cell *matCellDef="let appointment"> {{appointment.diagnostic}} </td>
             </ng-container>
@@ -68,7 +73,11 @@
         </div>
       </div>
     </ng-container>
-    <div class="flex justify-end mt-4">
-     <app-go-back-button></app-go-back-button>
+  <div class="w-full py-2"></div>
+    <div class="grid grid-cols-2 gap-4 w-full"></div>
+      <div class="flex justify-start">
+        <button *ngIf="visibleButtons" class="bg-orange-500 text-white px-4 py-2 rounded ml-4 mr-2" (click)="modifyDoctor()">Editar doctor</button>
+        <button *ngIf="visibleButtons" class="bg-red-500 text-white px-4 py-2 rounded" (click)="confirmDelete()">Eliminar doctor</button>
+        <app-go-back-button class="ml-auto mr-4"></app-go-back-button>
+      </div>      
     </div>
-  </div>

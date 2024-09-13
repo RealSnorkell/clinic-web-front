@@ -26,28 +26,28 @@ export class PatientService {
     return this._http.post<Patient>(this._apiUrl, patient);
   }
 
-  updatePatient(id: string, patient: Patient): Observable<Patient> {
-    return this._http.patch<Patient>(`${this._apiUrl}/${id}`, patient);
+  updatePatient(patient: Patient): Observable<Patient> {
+    return this._http.patch<Patient>(`${this._apiUrl}/${patient.id}`, patient);
   }
 
   deletePatient(id: string): Observable<void> {
     return this._http.delete<void>(`${this._apiUrl}/${id}`);
   }
 
-  searchPatientByDocument(document: string): Observable<Patient> {
+  getPatientByDocument(document: string): Observable<Patient> {
     return this._http.get<Patient>(`${this._apiUrl}/list/${document}`);
   }
+
   getAppointmentById(appointmentId: string): Observable<Appointment> {
     return this._http.get<Appointment>(
       `${this._apiUrl}/appointments/${appointmentId}`
     );
   }
-  getAppointmentsByPatientId(id: string): Observable<Page<Appointment>> {
+  getAppointmentsByPatientDocument(
+    document: string
+  ): Observable<Page<Appointment>> {
     return this._http.get<Page<Appointment>>(
-      `${this._apiUrl}/appointments/athletes/${id}`
+      `${backUrl}/appointments/patients/${document}`
     );
-  }
-  getDoctorById(doctorId: string): Observable<Doctor> {
-    return this._http.get<Doctor>(`${this._apiUrl}/${doctorId}`);
   }
 }
