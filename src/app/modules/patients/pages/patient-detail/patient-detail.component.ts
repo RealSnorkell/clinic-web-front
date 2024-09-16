@@ -1,5 +1,8 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Appointment } from '../../../../core/models/appointment.model';
+import {
+  Appointment,
+  FullAppointment,
+} from '../../../../core/models/appointment.model';
 import { Patient } from '../../../../core/models/patient.model';
 import { PatientService } from '../../service/patient.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -127,15 +130,25 @@ export class PatientDetailComponent {
     this._patientService.deletePatient(this.id).subscribe({
       next: () => {
         console.log('Patient deleted successfully');
-        this._routerNav.navigate(['']);
+        this._routerNav.navigate(['/patients/list']);
       },
       error: (error) => {
         console.error('Error deleting patient', error);
       },
     });
+    this.patient.idPatientAppointments.forEach((appointmentId) => {
+      this._appointmentService.deleteAppointment(appointmentId).subscribe({
+        next: () => {
+          console.log('Successfully deleted appointment: ', appointmentId);
+        },
+        error: () => {
+          console.log('Error deleting', appointmentId, ' appointment');
+        },
+      });
+    });
   }
 
-  saveChanges(): void {
+  onSubmit(): void {
     if (this.patient) {
       console.log('Patient updated: ', this.patient);
       this._patientService.updatePatient(this.patient).subscribe({
@@ -149,6 +162,43 @@ export class PatientDetailComponent {
         error: (error) => {
           console.error('Error updating patient', error);
         },
+      });
+
+      this.patient.idPatientAppointments.forEach((appointmentId) => {
+        let updatedAppointment: FullAppointment = {
+          id: appointmentId,
+          patient: this.patient,
+          doctor: {
+            licenseNum: '',
+            mirDate: '',
+            idDoctorAppointments: [],
+            specializations: [],
+            personalInformationDto: {
+              name: '',
+              surname: '',
+              idDocument: '',
+              document: '',
+            },
+          },
+          date: '',
+          diagnostic: '',
+          treatment: '',
+        };
+        this._appointmentService
+          .updateAppointment(appointmentId, updatedAppointment)
+          .subscribe({
+            next: () => {
+              console.log(
+                'For appointment: ',
+                appointmentId,
+                ' new patient: ',
+                this.patient
+              );
+            },
+            error: (error) => {
+              console.log('Error updating patient in appointments: ', error);
+            },
+          });
       });
     }
     this.visibleButtons = true;

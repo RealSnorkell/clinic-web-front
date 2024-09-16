@@ -30,7 +30,9 @@ export class DoctorDetailComponent implements OnInit {
     'date',
     'patientName',
     'patientSurname',
+    'socialSecurityNumber',
     'diagnostic',
+    'treatment',
   ];
 
   private allAppointments: Appointment[] = [];
@@ -80,6 +82,7 @@ export class DoctorDetailComponent implements OnInit {
           this.pageLengthAppointments = response.totalElements;
           this.updateAppointmentsDataSource(0, this.pageSizeAppointments);
           console.log('Citas', this.allAppointments);
+          console.log(this.allAppointments);
         },
         error: (error) => {
           console.error('Error fetching appointments', error);
@@ -133,11 +136,21 @@ export class DoctorDetailComponent implements OnInit {
     this._doctorService.deleteDoctor(this.id).subscribe({
       next: () => {
         console.log('Doctor successfully deleted');
-        this._routerNav.navigate(['']);
+        this._routerNav.navigate(['/doctors/list']);
       },
       error: (error) => {
         console.error('Error deleting doctor', error);
       },
+    });
+    this.doctor.idDoctorAppointments.forEach((appointmentId) => {
+      this._appointmentService.deleteAppointment(appointmentId).subscribe({
+        next: () => {
+          console.log('Successfully deleted appointment: ', appointmentId);
+        },
+        error: () => {
+          console.log('Error deleting', appointmentId, ' appointment');
+        },
+      });
     });
   }
 

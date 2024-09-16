@@ -47,8 +47,7 @@ export class PatientListComponent {
           if (this.paginator) {
             this.paginator.length = value.totalElements;
           }
-          console.log(value.content);
-          console.log(this.patients);
+          console.log('Patients: ', this.patients);
         } else {
           console.error('Invalid response structure', value);
         }

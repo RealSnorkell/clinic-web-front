@@ -11,6 +11,7 @@ export interface Appointment {
 }
 
 export interface FullAppointment {
+  id?: string;
   appointmentId?: string;
   doctor: Doctor;
   patient: Patient;

@@ -158,6 +158,7 @@ export class AppointmentDetailComponent {
         0,
         combinedDateTime.length - 5
       );
+
       const updatedAppointment = {
         ...this.appointment,
         date: dateToSend,
@@ -176,6 +177,7 @@ export class AppointmentDetailComponent {
             this._snackBar.open('Cita actualizada correctamente', 'Cerrar', {
               duration: 2000,
             });
+            console.log(updatedAppointment);
             this.toggleEdit();
             this.getAppointmentById(this.id);
           },

@@ -38,11 +38,6 @@ export class PatientService {
     return this._http.get<Patient>(`${this._apiUrl}/list/${document}`);
   }
 
-  getAppointmentById(appointmentId: string): Observable<Appointment> {
-    return this._http.get<Appointment>(
-      `${this._apiUrl}/appointments/${appointmentId}`
-    );
-  }
   getAppointmentsByPatientDocument(
     document: string
   ): Observable<Page<Appointment>> {

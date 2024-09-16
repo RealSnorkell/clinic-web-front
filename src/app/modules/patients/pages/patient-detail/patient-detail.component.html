@@ -14,7 +14,7 @@
   
     <div class="bg-white p-6 rounded-lg shadow-md" *ngIf="patient && isEditing">
       <h2 class="text-xl font-bold mb-4">Modificar paciente</h2>
-      <form (ngSubmit)="saveChanges()">
+      <form (ngSubmit)="onSubmit()">
         <div class="mb-4">
           <label for="name" class="block text-gray-700">Nombre</label>
           <input id="name" [(ngModel)]="patient.personalInformationDto.name" name="name" class="mt-1 p-2 border rounded w-full">
